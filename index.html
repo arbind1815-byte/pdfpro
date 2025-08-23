@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF AIPro - Advanced PDF Tools & AI-Powered Solutions</title>
+    <meta name="description" content="Transform your PDFs with AI-powered tools. Convert, merge, compress, edit, and secure your documents with professional-grade features.">
+    <meta name="keywords" content="PDF tools, AI PDF, convert PDF, merge PDF, compress PDF, edit PDF, secure PDF">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #ec4899;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow-light: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-large: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #475569;
+            --shadow-light: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+            --shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+            --shadow-large: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            display: grid;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: auto 1fr;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            grid-area: header;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .logo i {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            width: 300px;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(99 102 241 / 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 1.125rem;
+        }
+
+        .header-btn:hover {
+            color: var(--primary-color);
+            background: var(--bg-secondary);
+        }
+
+        .language-selector {
+            position: relative;
+        }
+
+        .language-dropdown {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 0.875rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-secondary);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            padding: 0 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            position: relative;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            color: var(--primary-color);
+            background: linear-gradient(90deg, transparent, rgb(99 102 241 / 0.1));
+            border-left-color: var(--primary-color);
+        }
+
+        .sidebar-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main {
+            grid-area: main;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .main-header {
+            margin-bottom: 2rem;
+        }
+
+        .main-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .main-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-large);
+            border-color: var(--primary-color);
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .tool-icon.convert { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+        .tool-icon.merge { background: linear-gradient(135deg, #10b981, #06b6d4); }
+        .tool-icon.compress { background: linear-gradient(135deg, #f59e0b, #f97316); }
+        .tool-icon.edit { background: linear-gradient(135deg, #ec4899, #ef4444); }
+        .tool-icon.secure { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .tool-icon.ai { background: linear-gradient(135deg, #8b5cf6, #6366f1); }
+        .tool-icon.forms { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .tool-icon.images { background: linear-gradient(135deg, #10b981, #059669); }
+
+        .tool-info h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .tool-info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Mobile Bottom Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 0.75rem 0;
+            z-index: 100;
+        }
+
+        .mobile-nav-list {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+            overflow-x: auto;
+            padding: 0 0.5rem;
+        }
+
+        .mobile-nav-item {
+            text-align: center;
+            flex-shrink: 0;
+            min-width: 60px;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 0.25rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.65rem;
+            white-space: nowrap;
+        }
+
+        .mobile-nav-link:hover,
+        .mobile-nav-link.active {
+            color: var(--primary-color);
+            background: rgb(99 102 241 / 0.1);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-areas: 
+                    "header"
+                    "main";
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .main {
+                padding: 1.5rem 1rem;
+                padding-bottom: 6rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .search-input {
+                width: 200px;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .main-title {
+                font-size: 1.5rem;
+            }
+
+            .auth-buttons {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-actions {
+                gap: 0.5rem;
+            }
+
+            .search-input {
+                width: 150px;
+            }
+
+            .main {
+                padding: 1rem 0.75rem;
+            }
+
+            .tool-card {
+                padding: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <a href="#" class="logo">
+                <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                <span>PDF AIPro</span>
+            </a>
+            
+            <div class="header-actions">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                    <input type="search" class="search-input" placeholder="Search tools..." aria-label="Search PDF tools">
+                </div>
+                
+                <button class="header-btn" id="settingsBtn" aria-label="Settings">
+                    <i class="fas fa-cog" aria-hidden="true"></i>
+                </button>
+                
+                <button class="header-btn" id="themeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+                
+                <div class="language-selector">
+                    <select class="language-dropdown" aria-label="Select language">
+                        <option value="en">🌐 EN</option>
+                        <option value="es">🇪🇸 ES</option>
+                        <option value="fr">🇫🇷 FR</option>
+                        <option value="de">🇩🇪 DE</option>
+                        <option value="zh">🇨🇳 ZH</option>
+                    </select>
+                </div>
+                
+                <div class="auth-buttons">
+                    <a href="#" class="btn btn-outline">Login</a>
+                    <a href="#" class="btn btn-primary">Sign Up</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h2 class="sidebar-title">Tool Categories</h2>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link active" data-category="convert">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-exchange-alt" aria-hidden="true"></i>
+                            </span>
+                            Convert
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" data-category="merge">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                            </span>
+                            Merge/Split
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" data-category="compress">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-compress-arrows-alt" aria-hidden="true"></i>
+                            </span>
+                            Compress
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" data-category="edit">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-edit" aria-hidden="true"></i>
+                            </span>
+                            Edit
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" data-category="secure">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                            </span>
+                            Secure
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" data-category="ai">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-brain" aria-hidden="true"></i>
+                            </span>
+                            AI Tools
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" data-category="forms">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-wpforms" aria-hidden="true"></i>
+                            </span>
+                            Forms
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" data-category="images">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-images" aria-hidden="true"></i>
+                            </span>
+                            Images
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="main-header">
+                <h1 class="main-title" id="categoryTitle">Convert Tools</h1>
+                <p class="main-subtitle" id="categorySubtitle">Transform your PDFs to and from various formats with AI-powered precision</p>
+            </div>
+
+            <div class="tools-grid" id="toolsGrid">
+                <!-- Tools will be populated by JavaScript -->
+            </div>
+        </main>
+
+        <!-- Mobile Navigation -->
+        <nav class="mobile-nav">
+            <ul class="mobile-nav-list">
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link active" data-category="convert">
+                        <i class="fas fa-exchange-alt mobile-nav-icon" aria-hidden="true"></i>
+                        <span>Convert</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-category="merge">
+                        <i class="fas fa-layer-group mobile-nav-icon" aria-hidden="true"></i>
+                        <span>Merge</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-category="compress">
+                        <i class="fas fa-compress-arrows-alt mobile-nav-icon" aria-hidden="true"></i>
+                        <span>Compress</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-category="edit">
+                        <i class="fas fa-edit mobile-nav-icon" aria-hidden="true"></i>
+                        <span>Edit</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-category="secure">
+                        <i class="fas fa-shield-alt mobile-nav-icon" aria-hidden="true"></i>
+                        <span>Secure</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-category="ai">
+                        <i class="fas fa-brain mobile-nav-icon" aria-hidden="true"></i>
+                        <span>AI</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-category="forms">
+                        <i class="fas fa-wpforms mobile-nav-icon" aria-hidden="true"></i>
+                        <span>Forms</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-category="images">
+                        <i class="fas fa-images mobile-nav-icon" aria-hidden="true"></i>
+                        <span>Images</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <script>
+        // Tool data
+        const toolsData = {
+            convert: {
+                title: "Convert Tools",
+                subtitle: "Transform your PDFs to and from various formats with AI-powered precision",
+                tools: [
+                    {
+                        name: "PDF to Word",
+                        description: "Convert PDF files to editable Word documents while preserving formatting and layout",
+                        icon: "fas fa-file-word"
+                    },
+                    {
+                        name: "PDF to Excel",
+                        description: "Extract tables and data from PDFs into Excel spreadsheets with intelligent recognition",
+                        icon: "fas fa-file-excel"
+                    },
+                    {
+                        name: "PDF to PowerPoint",
+                        description: "Transform PDF slides into editable PowerPoint presentations",
+                        icon: "fas fa-file-powerpoint"
+                    },
+                    {
+                        name: "PDF to Image",
+                        description: "Convert PDF pages to high-quality images in various formats (PNG, JPG, TIFF)",
+                        icon: "fas fa-file-image"
+                    },
+                    {
+                        name: "Word to PDF",
+                        description: "Convert Word documents to PDF while maintaining professional formatting",
+                        icon: "fas fa-file-pdf"
+                    },
+                    {
+                        name: "Excel to PDF",
+                        description: "Transform Excel spreadsheets into PDFs with preserved formulas and formatting",
+                        icon: "fas fa-table"
+                    }
+                ]
+            },
+            merge: {
+                title: "Merge & Split Tools",
+                subtitle: "Combine multiple PDFs or split large documents with intelligent processing",
+                tools: [
+                    {
+                        name: "Merge PDFs",
+                        description: "Combine multiple PDF files into a single document with customizable order",
+                        icon: "fas fa-layer-group"
+                    },
+                    {
+                        name: "Split PDF",
+                        description: "Divide large PDF files into smaller documents by pages or sections",
+                        icon: "fas fa-cut"
+                    },
+                    {
+                        name: "Extract Pages",
+                        description: "Select and extract specific pages from PDF documents",
+                        icon: "fas fa-file-export"
+                    },
+                    {
+                        name: "Remove Pages",
+                        description: "Delete unwanted pages from PDF documents quickly and easily",
+                        icon: "fas fa-trash-alt"
+                    },
+                    {
+                        name: "Reorder Pages",
+                        description: "Rearrange pages in your PDF with intuitive drag-and-drop interface",
+                        icon: "fas fa-sort"
+                    },
+                    {
+                        name: "Rotate Pages",
+                        description: "Rotate PDF pages to correct orientation and improve readability",
+                        icon: "fas fa-redo-alt"
+                    }
+                ]
+            },
+            compress: {
+                title: "Compression Tools",
+                subtitle: "Reduce file sizes while maintaining quality with advanced compression algorithms",
+                tools: [
+                    {
+                        name: "Compress PDF",
+                        description: "Reduce PDF file size while maintaining visual quality using AI optimization",
+                        icon: "fas fa-compress-arrows-alt"
+                    },
+                    {
+                        name: "Optimize Images",
+                        description: "Compress images within PDFs for faster loading and smaller file sizes",
+                        icon: "fas fa-image"
+                    },
+                    {
+                        name: "Smart Compression",
+                        description: "AI-powered compression that balances file size and quality automatically",
+                        icon: "fas fa-magic"
+                    },
+                    {
+                        name: "Batch Compress",
+                        description: "Compress multiple PDF files simultaneously with consistent settings",
+                        icon: "fas fa-layer-group"
+                    }
+                ]
+            },
+            edit: {
+                title: "Edit Tools",
+                subtitle: "Modify and enhance your PDFs with powerful editing capabilities",
+                tools: [
+                    {
+                        name: "Edit Text",
+                        description: "Edit text directly in PDF documents with font matching and formatting",
+                        icon: "fas fa-edit"
+                    },
+                    {
+                        name: "Add Annotations",
+                        description: "Add comments, highlights, and markup to PDF documents",
+                        icon: "fas fa-sticky-note"
+                    },
+                    {
+                        name: "Add Images",
+                        description: "Insert images and graphics into PDF documents with precise positioning",
+                        icon: "fas fa-image"
+                    },
+                    {
+                        name: "Add Watermark",
+                        description: "Apply text or image watermarks to protect and brand your documents",
+                        icon: "fas fa-tint"
+                    },
+                    {
+                        name: "Add Header/Footer",
+                        description: "Insert headers and footers with page numbers and custom text",
+                        icon: "fas fa-align-center"
+                    },
+                    {
+                        name: "Redact Content",
+                        description: "Permanently remove sensitive information from PDF documents",
+                        icon: "fas fa-eraser"
+                    }
+                ]
+            },
+            secure: {
+                title: "Security Tools",
+                subtitle: "Protect your documents with advanced security features and encryption",
+                tools: [
+                    {
+                        name: "Password Protect",
+                        description: "Add password protection to prevent unauthorized access to your PDFs",
+                        icon: "fas fa-lock"
+                    },
+                    {
+                        name: "Remove Password",
+                        description: "Unlock password-protected PDFs when you have the correct credentials",
+                        icon: "fas fa-unlock"
+                    },
+                    {
+                        name: "Digital Signature",
+                        description: "Add legally binding digital signatures to authenticate documents",
+                        icon: "fas fa-signature"
+                    },
+                    {
+                        name: "Encrypt PDF",
+                        description: "Apply advanced encryption to secure sensitive document content",
+                        icon: "fas fa-shield-alt"
+                    },
+                    {
+                        name: "Permissions",
+                        description: "Set document permissions to control printing, copying, and editing",
+                        icon: "fas fa-user-shield"
+                    }
+                ]
+            },
+            ai: {
+                title: "AI-Powered Tools",
+                subtitle: "Leverage artificial intelligence to enhance and analyze your PDF documents",
+                tools: [
+                    {
+                        name: "AI Summarizer",
+                        description: "Generate intelligent summaries of lengthy PDF documents automatically",
+                        icon: "fas fa-brain"
+                    },
+                    {
+                        name: "OCR Text Recognition",
+                        description: "Convert scanned documents to searchable text with AI-powered OCR",
+                        icon: "fas fa-eye"
+                    },
+                    {
+                        name: "Smart Translation",
+                        description: "Translate PDF content to multiple languages while preserving formatting",
+                        icon: "fas fa-language"
+                    },
+                    {
+                        name: "Content Analysis",
+                        description: "Analyze document content for insights, topics, and key information",
+                        icon: "fas fa-chart-line"
+                    },
+                    {
+                        name: "Auto-Tagging",
+                        description: "Automatically tag and categorize documents based on content analysis",
+                        icon: "fas fa-tags"
+                    },
+                    {
+                        name: "Smart Search",
+                        description: "Find specific content across multiple PDFs using AI-powered search",
+                        icon: "fas fa-search"
+                    }
+                ]
+            },
+            forms: {
+                title: "Form Tools",
+                subtitle: "Create, fill, and manage PDF forms with intelligent form recognition",
+                tools: [
+                    {
+                        name: "Fill Forms",
+                        description: "Fill out PDF forms quickly with auto-completion and data validation",
+                        icon: "fas fa-edit"
+                    },
+                    {
+                        name: "Create Forms",
+                        description: "Design interactive PDF forms with various field types and validation",
+                        icon: "fas fa-wpforms"
+                    },
+                    {
+                        name: "Form Recognition",
+                        description: "Convert static PDFs into fillable forms using AI field detection",
+                        icon: "fas fa-magic"
+                    },
+                    {
+                        name: "Data Extraction",
+                        description: "Extract form data into spreadsheets for analysis and reporting",
+                        icon: "fas fa-database"
+                    },
+                    {
+                        name: "Batch Fill",
+                        description: "Fill multiple forms simultaneously using data from spreadsheets",
+                        icon: "fas fa-layer-group"
+                    }
+                ]
+            },
+            images: {
+                title: "Image Tools",
+                subtitle: "Extract, optimize, and manipulate images within PDF documents",
+                tools: [
+                    {
+                        name: "Extract Images",
+                        description: "Extract all images from PDF documents in their original quality",
+                        icon: "fas fa-download"
+                    },
+                    {
+                        name: "Replace Images",
+                        description: "Replace existing images in PDFs with new ones while maintaining layout",
+                        icon: "fas fa-exchange-alt"
+                    },
+                    {
+                        name: "Optimize Images",
+                        description: "Compress and optimize images within PDFs for better performance",
+                        icon: "fas fa-compress"
+                    },
+                    {
+                        name: "Add Images",
+                        description: "Insert new images into PDF documents with precise positioning",
+                        icon: "fas fa-plus"
+                    },
+                    {
+                        name: "Image Enhancement",
+                        description: "Enhance image quality, brightness, and contrast within PDFs",
+                        icon: "fas fa-adjust"
+                    },
+                    {
+                        name: "Background Removal",
+                        description: "Remove backgrounds from images in PDF documents automatically",
+                        icon: "fas fa-cut"
+                    }
+                ]
+            }
+        };
+
+        // DOM Elements
+        const categoryTitle = document.getElementById('categoryTitle');
+        const categorySubtitle = document.getElementById('categorySubtitle');
+        const toolsGrid = document.getElementById('toolsGrid');
+        const themeToggle = document.getElementById('themeToggle');
+        const searchInput = document.querySelector('.search-input');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        // Current category
+        let currentCategory = 'convert';
+
+        // Initialize the app
+        function init() {
+            loadCategory('convert');
+            setupEventListeners();
+            setupTheme();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Sidebar navigation
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const category = link.dataset.category;
+                    setActiveCategory(category);
+                    loadCategory(category);
+                });
+            });
+
+            // Mobile navigation
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const category = link.dataset.category;
+                    setActiveCategory(category);
+                    loadCategory(category);
+                });
+            });
+
+            // Theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Search functionality
+            searchInput.addEventListener('input', handleSearch);
+
+            // Tool card clicks
+            toolsGrid.addEventListener('click', (e) => {
+                const toolCard = e.target.closest('.tool-card');
+                if (toolCard) {
+                    handleToolClick(toolCard);
+                }
+            });
+        }
+
+        // Load category tools
+        function loadCategory(category) {
+            currentCategory = category;
+            const categoryData = toolsData[category];
+            
+            if (!categoryData) return;
+
+            // Update header
+            categoryTitle.textContent = categoryData.title;
+            categorySubtitle.textContent = categoryData.subtitle;
+
+            // Clear and populate tools grid
+            toolsGrid.innerHTML = '';
+            
+            categoryData.tools.forEach((tool, index) => {
+                const toolCard = createToolCard(tool, category, index);
+                toolsGrid.appendChild(toolCard);
+            });
+
+            // Add fade-in animation
+            setTimeout(() => {
+                const toolCards = toolsGrid.querySelectorAll('.tool-card');
+                toolCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('fade-in');
+                    }, index * 100);
+                });
+            }, 50);
+        }
+
+        // Create tool card element
+        function createToolCard(tool, category, index) {
+            const card = document.createElement('div');
+            card.className = 'tool-card';
+            card.dataset.tool = tool.name.toLowerCase().replace(/\s+/g, '-');
+            card.dataset.category = category;
+            
+            card.innerHTML = `
+                <div class="tool-header">
+                    <div class="tool-icon ${category}">
+                        <i class="${tool.icon}" aria-hidden="true"></i>
+                    </div>
+                    <div class="tool-info">
+                        <h3>${tool.name}</h3>
+                        <p>${tool.description}</p>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Set active category
+        function setActiveCategory(category) {
+            // Update sidebar
+            sidebarLinks.forEach(link => {
+                link.classList.toggle('active', link.dataset.category === category);
+            });
+
+            // Update mobile nav
+            mobileNavLinks.forEach(link => {
+                link.classList.toggle('active', link.dataset.category === category);
+            });
+        }
+
+        // Handle tool click
+        function handleToolClick(toolCard) {
+            const toolName = toolCard.dataset.tool;
+            const category = toolCard.dataset.category;
+            
+            // Add loading state
+            toolCard.classList.add('loading');
+            
+            // Simulate tool launch
+            setTimeout(() => {
+                toolCard.classList.remove('loading');
+                alert(`Launching ${toolName} tool from ${category} category!`);
+            }, 1000);
+        }
+
+        // Search functionality
+        function handleSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                loadCategory(currentCategory);
+                return;
+            }
+
+            // Search across all tools
+            const searchResults = [];
+            
+            Object.entries(toolsData).forEach(([categoryKey, categoryData]) => {
+                categoryData.tools.forEach(tool => {
+                    if (tool.name.toLowerCase().includes(searchTerm) || 
+                        tool.description.toLowerCase().includes(searchTerm)) {
+                        searchResults.push({
+                            ...tool,
+                            category: categoryKey
+                        });
+                    }
+                });
+            });
+
+            // Display search results
+            displaySearchResults(searchResults, searchTerm);
+        }
+
+        // Display search results
+        function displaySearchResults(results, searchTerm) {
+            categoryTitle.textContent = `Search Results for "${searchTerm}"`;
+            categorySubtitle.textContent = `Found ${results.length} tools matching your search`;
+
+            toolsGrid.innerHTML = '';
+
+            if (results.length === 0) {
+                toolsGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-secondary);">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h3>No tools found</h3>
+                        <p>Try adjusting your search terms or browse categories</p>
+                    </div>
+                `;
+                return;
+            }
+
+            results.forEach((tool, index) => {
+                const toolCard = createToolCard(tool, tool.category, index);
+                toolsGrid.appendChild(toolCard);
+            });
+
+            // Add fade-in animation
+            setTimeout(() => {
+                const toolCards = toolsGrid.querySelectorAll('.tool-card');
+                toolCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('fade-in');
+                    }, index * 100);
+                });
+            }, 50);
+        }
+
+        // Theme management
+        function setupTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = themeToggle.querySelector('i');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Responsive handling
+        function handleResize() {
+            // Close mobile menu on resize to desktop
+            if (window.innerWidth > 768) {
+                // Any mobile-specific cleanup
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            
+            if (e.key === 'Escape') {
+                searchInput.blur();
+                searchInput.value = '';
+                loadCategory(currentCategory);
+            }
+        });
+
+        // Add tooltips (simple implementation)
+        function addTooltips() {
+            const tooltipElements = document.querySelectorAll('[aria-label]');
+            tooltipElements.forEach(element => {
+                element.addEventListener('mouseenter', showTooltip);
+                element.addEventListener('mouseleave', hideTooltip);
+            });
+        }
+
+        function showTooltip(e) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = e.target.getAttribute('aria-label');
+            tooltip.style.cssText = `
+                position: absolute;
+                background: var(--text-primary);
+                color: var(--bg-primary);
+                padding: 0.5rem;
+                border-radius: 0.25rem;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                z-index: 1000;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+            
+            document.body.appendChild(tooltip);
+            
+            const rect = e.target.getBoundingClientRect();
+            tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
+            tooltip.style.top = rect.bottom + 8 + 'px';
+            
+            setTimeout(() => {
+                tooltip.style.opacity = '1';
+            }, 100);
+            
+            e.target._tooltip = tooltip;
+        }
+
+        function hideTooltip(e) {
+            if (e.target._tooltip) {
+                e.target._tooltip.remove();
+                delete e.target._tooltip;
+            }
+        }
+
+        // Initialize tooltips
+        setTimeout(addTooltips, 100);
+    </script>
+</body>
+</html>
