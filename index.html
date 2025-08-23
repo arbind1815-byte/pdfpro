@@ -55,7 +55,7 @@
 
         .container {
             display: grid;
-            grid-template-areas: 
+            grid-template-areas:
                 "header header"
                 "sidebar main";
             grid-template-columns: 280px 1fr;
@@ -417,7 +417,7 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
-                grid-template-areas: 
+                grid-template-areas:
                     "header"
                     "main";
                 grid-template-columns: 1fr;
@@ -524,6 +524,125 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            margin: 10% auto;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-large);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-body p {
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .file-upload-area.drag-over {
+            border-color: var(--primary-color);
+            background-color: var(--bg-secondary);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            color: var(--primary-color);
+        }
+
+        .file-label i {
+            font-size: 2rem;
+        }
+
+        .file-label span {
+            font-weight: 500;
+        }
+
+        .file-name {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            background-color: var(--bg-secondary);
+        }
     </style>
 </head>
 <body>
@@ -534,21 +653,21 @@
                 <i class="fas fa-file-pdf" aria-hidden="true"></i>
                 <span>PDF AIPro</span>
             </a>
-            
+
             <div class="header-actions">
                 <div class="search-container">
                     <i class="fas fa-search search-icon" aria-hidden="true"></i>
                     <input type="search" class="search-input" placeholder="Search tools..." aria-label="Search PDF tools">
                 </div>
-                
+
                 <button class="header-btn" id="settingsBtn" aria-label="Settings">
                     <i class="fas fa-cog" aria-hidden="true"></i>
                 </button>
-                
+
                 <button class="header-btn" id="themeToggle" aria-label="Toggle dark mode">
                     <i class="fas fa-moon" aria-hidden="true"></i>
                 </button>
-                
+
                 <div class="language-selector">
                     <select class="language-dropdown" aria-label="Select language">
                         <option value="en">🌐 EN</option>
@@ -558,7 +677,7 @@
                         <option value="zh">🇨🇳 ZH</option>
                     </select>
                 </div>
-                
+
                 <div class="auth-buttons">
                     <a href="#" class="btn btn-outline">Login</a>
                     <a href="#" class="btn btn-primary">Sign Up</a>
@@ -987,6 +1106,14 @@
         const searchInput = document.querySelector('.search-input');
         const sidebarLinks = document.querySelectorAll('.sidebar-link');
         const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        const toolModal = document.getElementById('toolModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const fileUploadArea = document.querySelector('.file-upload-area');
 
         // Current category
         let currentCategory = 'convert';
@@ -1033,13 +1160,50 @@
                     handleToolClick(toolCard);
                 }
             });
+
+            // Modal listeners
+            closeModalBtn.addEventListener('click', closeModal);
+            cancelModalBtn.addEventListener('click', closeModal);
+            window.addEventListener('click', (event) => {
+                if (event.target == toolModal) {
+                    closeModal();
+                }
+            });
+
+            // File input listeners
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    fileName.textContent = fileInput.files[0].name;
+                } else {
+                    fileName.textContent = '';
+                }
+            });
+
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('drag-over');
+            });
+
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('drag-over');
+            });
+
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('drag-over');
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    const event = new Event('change');
+                    fileInput.dispatchEvent(event);
+                }
+            });
         }
 
         // Load category tools
         function loadCategory(category) {
             currentCategory = category;
             const categoryData = toolsData[category];
-            
+
             if (!categoryData) return;
 
             // Update header
@@ -1048,7 +1212,7 @@
 
             // Clear and populate tools grid
             toolsGrid.innerHTML = '';
-            
+
             categoryData.tools.forEach((tool, index) => {
                 const toolCard = createToolCard(tool, category, index);
                 toolsGrid.appendChild(toolCard);
@@ -1071,7 +1235,7 @@
             card.className = 'tool-card';
             card.dataset.tool = tool.name.toLowerCase().replace(/\s+/g, '-');
             card.dataset.category = category;
-            
+
             card.innerHTML = `
                 <div class="tool-header">
                     <div class="tool-icon ${category}">
@@ -1102,23 +1266,38 @@
 
         // Handle tool click
         function handleToolClick(toolCard) {
-            const toolName = toolCard.dataset.tool;
-            const category = toolCard.dataset.category;
-            
-            // Add loading state
-            toolCard.classList.add('loading');
-            
-            // Simulate tool launch
-            setTimeout(() => {
-                toolCard.classList.remove('loading');
-                alert(`Launching ${toolName} tool from ${category} category!`);
-            }, 1000);
+            const toolName = toolCard.querySelector('h3').textContent;
+            const toolData = findToolData(toolName);
+
+            if (toolData) {
+                modalTitle.textContent = toolData.name;
+                modalDescription.textContent = toolData.description;
+                toolModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function findToolData(toolName) {
+            for (const category in toolsData) {
+                const tool = toolsData[category].tools.find(t => t.name === toolName);
+                if (tool) return tool;
+            }
+            return null;
+        }
+
+        function closeModal() {
+            toolModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            // Reset file input
+            fileInput.value = '';
+            fileName.textContent = '';
+            fileUploadArea.classList.remove('drag-over');
         }
 
         // Search functionality
         function handleSearch() {
             const searchTerm = searchInput.value.toLowerCase().trim();
-            
+
             if (searchTerm === '') {
                 loadCategory(currentCategory);
                 return;
@@ -1126,10 +1305,10 @@
 
             // Search across all tools
             const searchResults = [];
-            
+
             Object.entries(toolsData).forEach(([categoryKey, categoryData]) => {
                 categoryData.tools.forEach(tool => {
-                    if (tool.name.toLowerCase().includes(searchTerm) || 
+                    if (tool.name.toLowerCase().includes(searchTerm) ||
                         tool.description.toLowerCase().includes(searchTerm)) {
                         searchResults.push({
                             ...tool,
@@ -1187,7 +1366,7 @@
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
+
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             updateThemeIcon(newTheme);
@@ -1230,7 +1409,7 @@
                 e.preventDefault();
                 searchInput.focus();
             }
-            
+
             if (e.key === 'Escape') {
                 searchInput.blur();
                 searchInput.value = '';
@@ -1264,17 +1443,17 @@
                 opacity: 0;
                 transition: opacity 0.3s ease;
             `;
-            
+
             document.body.appendChild(tooltip);
-            
+
             const rect = e.target.getBoundingClientRect();
             tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
             tooltip.style.top = rect.bottom + 8 + 'px';
-            
+
             setTimeout(() => {
                 tooltip.style.opacity = '1';
             }, 100);
-            
+
             e.target._tooltip = tooltip;
         }
 
@@ -1288,5 +1467,30 @@
         // Initialize tooltips
         setTimeout(addTooltips, 100);
     </script>
+
+    <!-- Modal -->
+    <div id="toolModal" class="modal">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="modalTitle">Tool</h2>
+                <button id="closeModalBtn" class="modal-close">&times;</button>
+            </header>
+            <div class="modal-body">
+                <p id="modalDescription"></p>
+                <div class="file-upload-area">
+                    <input type="file" id="fileInput" class="file-input" />
+                    <label for="fileInput" class="file-label">
+                        <i class="fas fa-upload"></i>
+                        <span>Choose a file or drop it here</span>
+                    </label>
+                    <div id="fileName" class="file-name"></div>
+                </div>
+            </div>
+            <footer class="modal-footer">
+                <button class="btn btn-outline" id="cancelModalBtn">Cancel</button>
+                <button class="btn btn-primary" id="startProcessingBtn">Start</button>
+            </footer>
+        </div>
+    </div>
 </body>
 </html>
