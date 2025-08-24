@@ -7,6 +7,7 @@
     <meta name="description" content="Transform your PDFs with AI-powered tools. Convert, merge, compress, edit, and secure your documents with professional-grade features.">
     <meta name="keywords" content="PDF tools, AI PDF, convert PDF, merge PDF, compress PDF, edit PDF, secure PDF">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://unpkg.com/convertapi-js/lib/convertapi.js"></script>
     <style>
         * {
             margin: 0;
@@ -643,6 +644,21 @@
             gap: 0.75rem;
             background-color: var(--bg-secondary);
         }
+
+        .conversion-result {
+            display: none;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .conversion-result .spinner {
+            margin: 0 auto 1rem;
+        }
+
+        .status-text {
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -1114,6 +1130,7 @@
         const fileInput = document.getElementById('fileInput');
         const fileName = document.getElementById('fileName');
         const fileUploadArea = document.querySelector('.file-upload-area');
+        const startProcessingBtn = document.getElementById('startProcessingBtn');
 
         // Current category
         let currentCategory = 'convert';
@@ -1195,6 +1212,49 @@
                     fileInput.files = e.dataTransfer.files;
                     const event = new Event('change');
                     fileInput.dispatchEvent(event);
+                }
+            });
+
+            startProcessingBtn.addEventListener('click', async () => {
+                if (fileInput.files.length === 0) {
+                    alert('Please select a file to convert.');
+                    return;
+                }
+
+                const conversionResult = document.getElementById('conversionResult');
+                const statusText = conversionResult.querySelector('.status-text');
+                const downloadLink = document.getElementById('downloadLink');
+                const spinner = conversionResult.querySelector('.spinner');
+
+                // Show progress
+                conversionResult.style.display = 'block';
+                statusText.textContent = 'Converting...';
+                spinner.style.display = 'block';
+                downloadLink.style.display = 'none';
+
+                const apiKey = 'oie49BG96pHndXDY3tZKX36FCw36JTol';
+                let convertApi = ConvertApi.auth({secret: apiKey});
+                let params = convertApi.createParams();
+                params.add('file', fileInput.files[0]);
+
+                try {
+                    let result = await convertApi.convert('pdf', 'docx', params);
+
+                    if (result.files && result.files.length > 0) {
+                        const fileUrl = result.files[0].Url;
+                        statusText.textContent = 'Conversion successful!';
+                        spinner.style.display = 'none';
+                        downloadLink.href = fileUrl;
+                        downloadLink.download = result.files[0].FileName;
+                        downloadLink.style.display = 'inline-flex';
+                    } else {
+                        statusText.textContent = 'Conversion failed. Please try again.';
+                        spinner.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Conversion error:', error);
+                    statusText.textContent = 'An error occurred. Please check the console.';
+                    spinner.style.display = 'none';
                 }
             });
         }
@@ -1292,6 +1352,11 @@
             fileInput.value = '';
             fileName.textContent = '';
             fileUploadArea.classList.remove('drag-over');
+            // Reset result section
+            const conversionResult = document.getElementById('conversionResult');
+            if (conversionResult) {
+                conversionResult.style.display = 'none';
+            }
         }
 
         // Search functionality
@@ -1484,6 +1549,11 @@
                         <span>Choose a file or drop it here</span>
                     </label>
                     <div id="fileName" class="file-name"></div>
+                </div>
+                <div id="conversionResult" class="conversion-result">
+                    <div class="spinner"></div>
+                    <p class="status-text">Converting...</p>
+                    <a href="#" id="downloadLink" class="btn btn-primary" style="display: none;">Download File</a>
                 </div>
             </div>
             <footer class="modal-footer">
