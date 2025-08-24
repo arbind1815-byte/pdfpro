@@ -1221,6 +1221,24 @@
                     return;
                 }
 
+                const toolName = modalTitle.textContent;
+                let fromFormat, toFormat;
+
+                switch (toolName) {
+                    case 'PDF to Word':
+                        fromFormat = 'pdf';
+                        toFormat = 'docx';
+                        break;
+                    case 'PDF to Excel':
+                        fromFormat = 'pdf';
+                        toFormat = 'xlsx';
+                        break;
+                    // Add more cases for other tools here
+                    default:
+                        alert('This tool is not yet implemented.');
+                        return;
+                }
+
                 const conversionResult = document.getElementById('conversionResult');
                 const statusText = conversionResult.querySelector('.status-text');
                 const downloadLink = document.getElementById('downloadLink');
@@ -1238,7 +1256,7 @@
                 params.add('file', fileInput.files[0]);
 
                 try {
-                    let result = await convertApi.convert('pdf', 'docx', params);
+                    let result = await convertApi.convert(fromFormat, toFormat, params);
 
                     if (result.files && result.files.length > 0) {
                         const fileUrl = result.files[0].Url;
